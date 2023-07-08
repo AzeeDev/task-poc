@@ -6,52 +6,65 @@
     <div class="container py-5 h-100">
         <div class="row d-flex justify-content-center align-items-center h-100">
             <div class="col">
-                <div class="card" id="list1" style="border-radius: .75rem; background-color: #eff1f2;">
+                <div class="card" id="list1" style="border-radius: .75rem; background-color: white;">
                     <div class="card-body py-4 px-4 px-md-5">
-
+                        <span class="badge bg-success">User: <i>{{ user }}</i></span>
+                        <a href="{% url 'logout' %}" class="float-end btn btn-sm btn-danger">Logout</a>
                         <p class="h1 text-center mt-3 mb-4 pb-3 text-primary">
                             <i class="fas fa-check-square me-1"></i>
                             <u>My Todo-s</u>
-                            {{ user }}
                         </p>
-
-                        <div class="pb-2">
-                            <div class="card">
-                                <div class="card-body">
-                                    <div class="d-flex flex-row align-items-center">
-                                        <div>
-                                            <button type="button" class="btn btn-primary">Add</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                        <a href="{% url 'add-edit-item' 0 %}" class="btn btn-primary btn-sm">Add</a>
+                        {% for message in messages %}
+                        <div class="alert alert-success alert-dismissible fade show mt-3 h-50" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close btn-sm" data-bs-dismiss="alert"
+                                    aria-label="Close"></button>
                         </div>
-
+                        {% endfor %}
                         <hr class="my-4">
-                        <table class="table">
+                        <table class="table text-center" >
                             <thead>
-                            <tr class="">
+                            <tr>
                                 <th scope="col">#</th>
                                 <th scope="col">Title</th>
-                                <th scope="col">Description</th>
                                 <th scope="col">Status</th>
                                 <th scope="col">Action</th>
                             </tr>
                             </thead>
                             <tbody>
+                            {% for item in page_obj.object_list %}
                             <tr>
-                                <th scope="row">1</th>
-                                <td>Mark</td>
-                                <td>Otto</td>
-                                <td>@mdo</td>
+                                <th scope="row">{{ forloop.counter }}</th>
+                                <td>{{ item.title }}</td>
                                 <td>
-                                    <a href="#!" class="btn btn-sm btn-info" data-mdb-toggle="tooltip" title="Edit todo">Edit</a>
+                                {% if item.status  %}
+                                 <span class="badge bg-success">completed</span>
+                                {% else %}
+                                 <span class="badge bg-danger">incomplete</span>
+                                 {% endif %}
+                                </td>
+                                <td>
+                                    <a href="{% url 'add-edit-item' item.id %}" class="btn btn-sm btn-info" data-mdb-toggle="tooltip" title="Edit todo">Edit</a>
                                     &nbsp;&nbsp;
-                                    <a href="#!" class="btn btn-sm btn-danger" data-mdb-toggle="tooltip" title="Delete todo">Delete</a>
+                                    <a href="{% url 'delete-item' item.id %}" class="btn btn-sm btn-danger" data-mdb-toggle="tooltip" title="Delete todo">Delete</a>
                                 </td>
                             </tr>
+                            {% endfor %}
                             </tbody>
                         </table>
+                        <div class="mt-4">
+                            <i>Page:</i>
+                            {%if page_obj.has_previous %} {# whether the previous page exists #}
+                                <a href="?page={{page_obj.previous_page_number}}"><strong>previous</strong> {{page_obj.previous_page_number}}</a> {# link to the prev page #}
+                            {% endif %}
+                            <span>{{page_obj.number}}</span> {# the current page number #}
+                            
+                            {%if page_obj.has_next %} {# whether the next page exists #}
+                                <a href="?page={{page_obj.next_page_number}}">{{page_obj.next_page_number}} 
+                                    <strong>next</strong></a> {# link to the next page #}
+                            {% endif %}
+                                </div>  
                     </div>
                 </div>
             </div>
